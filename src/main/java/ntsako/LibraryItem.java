@@ -1,48 +1,44 @@
 package ntsako;
 
-/**
- * TODO: Ensure proper Encapsulation by choosing the correct visibility
- * modifier for the fields below so they cannot be accessed directly outside this class.
- */
 public class LibraryItem {
 
-    // 1. Declare fields here: id (String), title (String), isBorrowed (boolean)
-    // ____ String id;
-    // ____ String title;
-    // ____ boolean isBorrowed;
+    // Encapsulation: Fields are strictly private
+    private final String id;
+    private final String title;
+    private boolean isBorrowed;
 
     /**
      * Constructor to initialize a new Library Asset.
-     * TODO: Initialize id and title. Ensure 'isBorrowed' defaults to false.
      */
     public LibraryItem(String id, String title) {
-        // TODO: Your code here
+        this.id = id;
+        this.title = title;
+        this.isBorrowed = false; // Business rule: Default state is false
     }
 
     /**
      * Updates the internal state of the item to borrowed.
-     * TODO: Implement state validation. If the item is already borrowed,
-     * throw an IllegalStateException with the precise message: "Item is already borrowed"
+     * Throws an exception if an invalid state transition is attempted.
      */
     public void borrowItem() {
-        // TODO: Add guard clause and state mutation logic here
+        // Defensive guard clause
+        if (this.isBorrowed) {
+            throw new IllegalStateException("Item is already borrowed");
+        }
+        this.isBorrowed = true;
     }
 
     // --- Public Getters ---
-    // TODO: Implement standard public getters to safely expose the internal fields
 
     public String getId() {
-        // TODO: Your code here
-        return null;
+        return this.id;
     }
 
     public String getTitle() {
-        // TODO: Your code here
-        return null;
+        return this.title;
     }
 
     public boolean isBorrowed() {
-        // TODO: Your code here
-        return false;
+        return this.isBorrowed;
     }
 }

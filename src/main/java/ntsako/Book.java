@@ -1,35 +1,30 @@
 package ntsako;
 
-/**
- * TODO: Establish an Inheritance relationship. Make this class inherit from LibraryItem.
- */
-public class Book {
+// Inheritance: Book 'is-a' LibraryItem
+public class Book extends LibraryItem {
 
-    // 1. Encapsulation: Declare a private String field unique to books named 'author'
-    // ____ String author;
+    // Unique subclass field
+    private final String author;
 
     /**
      * Constructor for a Book instance.
-     * TODO: Use constructor chaining to pass down 'id' and 'title' to the superclass.
-     * Then initialize the unique subclass field.
      */
     public Book(String id, String title, String author) {
-        // TODO: Core parent initialization must happen first here
-
-        // TODO: Subclass field initialization
+        // Constructor Chaining: Must be the absolute first statement
+        super(id, title);
+        this.author = author;
     }
 
     public String getAuthor() {
-        // TODO: Your code here
-        return null;
+        return this.author;
     }
 
     /**
-     * TODO: Override the default toString() method to return a custom description string.
-     * Remember to use the compiler metadata annotation for safeguards.
-     * Hint: Pay attention to how you access the parent's private fields (id, title).
+     * Overrides the default description string.
      */
-    // ____ String toString() {
-    //     return ...
-    // }
+    @Override
+    public String toString() {
+        // Must use the parent's public getters to access the encapsulated fields
+        return "Book [ID=" + getId() + ", Title='" + getTitle() + "', Author='" + this.author + "']";
+    }
 }
