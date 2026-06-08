@@ -1,47 +1,61 @@
-# Java_Summative
+# Greenfield Lab: Library Management System Invariants
 
-# Greenfield Lab: Library Management System
+## 📖 The Scenario
 
-Welcome to your Java Summative Assessment. This greenfield project is designed to test your understanding of core Object-Oriented Programming (OOP) principles—specifically **Encapsulation** and **Inheritance**—as well as your ability to write comprehensive **Unit Tests**.
+You have been onboarded onto a greenfield engineering team building a brand-new internal **Library Asset Management System**. 
 
-Your task is to complete the missing architecture and logic inside the provided template skeletons.
+The initial core structure has been established, but a junior developer pushed partial code changes that broke data safety rules. Currently, any program in our system can bypass our business tracking logic and change critical fields like `isBorrowed` manually. Even worse, our application crashes unexpectedly because it allows items to be borrowed multiple times without any state tracking validation.
 
----
-
-## Technical Objectives
-
-To pass the assessment, your completed codebase must satisfy the following architectural rules:
-
-### 1. Encapsulation (Data Hiding)
-* **Field Security:** All state variables must be fully hidden from external classes, including subclasses. Choose visibility modifiers that enforce strict encapsulation.
-* **Controlled State Transitions:** State mutation must not happen via arbitrary setter methods. You must implement defensive guard logic to ensure an item's state cannot be corrupted (e.g., preventing an item from being borrowed if it is already out).
-* **API Accessors:** Expose safe, read-only paths to internal fields using standard public getter conventions.
-
-### 2. Inheritance (The "Is-A" Relationship)
-* **Class Hierarchy:** Establish a clean parental relationship where a specialized item inherits properties and core lifecycle behaviors from a generic asset base.
-* **Constructor Chaining:** Ensure parent dependencies are initialized upstream immediately before subclass fields are processed.
-* **Polymorphism & Overriding:** Customize inherited behavior to include subclass data fields. You must leverage compiler-level annotations to guarantee structural validity.
+Your task is to refactor and implement the core engineering rules inside the `ntsako` package to secure our application architecture before it goes live.
 
 ---
 
-## Tasks to Complete
+## 🛠️ Step-by-Step Technical Requirements
 
-### Phase 1: Production Code Skeletons
-Navigate to `src/main/java/` and complete the logic inside:
-1. **`LibraryItem.java`**: Set up fields, initialize the default state safely, enforce business logic invariants in state mutation methods, and expose read accessors.
-2. **`Book.java`**: Inherit from the base class, chain constructors cleanly, and override text representations without breaking the parent's encapsulation rules.
+Your objectives are split across two core files under `src/main/java/ntsako/`. You must replace the `TODO` placeholders with code that satisfies these exact rules:
 
-### Phase 2: Unit Testing
-Navigate to `src/test/java/` and create a test suite class named `LibraryItemTest`. You must write isolated tests using JUnit 5 assertions to verify:
-* Successful data initialization and state defaults.
-* Successful mutation logic (Happy Path).
-* Exceptional runtime states when business invariants are breached (Boundary/Error Path).
+### 1. Specifications for `LibraryItem.java`
+
+* **Field Configuration (Encapsulation):**
+  * Change the visibility modifiers of the three declared fields (`id`, `title`, and `isBorrowed`) from package-private to `private`. 
+  * Mark the identity fields (`id` and `title`) as immutable using the `final` modifier.
+* **Constructor Logic:**
+  * Map the incoming constructor arguments explicitly to the instance fields using the `this` reference keyword (e.g., `this.id = id;`).
+  * Explicitly set the internal state flag `this.isBorrowed` to `false` to define the baseline invariant state.
+* **State Mutation Logic (`borrowItem()`):**
+  * You must implement a defensive **guard clause** at the very top of the method using an `if` condition.
+  * If `this.isBorrowed` evaluates to `true`, instantly halt execution by throwing a new `IllegalStateException` with the exact literal string: `"Item is already borrowed"`.
+  * If the guard clause passes, alter the internal object state by assigning `this.isBorrowed = true;`.
+* **API Accessors (Getters):**
+  * Implement public getters that precisely return their corresponding private field data.
+  * *Crucial Naming Rule:* Ensure your boolean accessor matches the standard Java bean naming convention (`public boolean isBorrowed()`) rather than a generic `get` prefix.
+
+### 2. Specifications for `Book.java`
+
+* **Class Architecture (Inheritance):**
+  * Modify the class header to establish a strict parent-child hierarchy by appending `extends LibraryItem` to the class signature.
+* **Subclass Field Isolation:**
+  * Declare an internal field named `author` of type `String`. 
+  * Enforce strict encapsulation rules by marking it `private` and `final`.
+* **Constructor Chaining:**
+  * Inside the `Book` constructor block, your **absolute first instruction** must be an upstream invocation to the parent class constructor using `super(id, title);`. 
+  * *Warning:* Attempting to assign `this.author` before executing the `super()` chain will throw a fatal compile-time error.
+* **Polymorphic Overriding (`toString()`):**
+  * Implement a public `toString()` method that returns a descriptive layout string.
+  * Place the `@Override` metadata annotation directly above the method declaration to enable compiler verification.
+  * *Encapsulation Constraint:* Because the parent class properties are sealed under `private` access modifiers, you **cannot** reference `this.id`, `super.id`, `this.title`, or `super.title` directly inside this subclass. You must access them polymorphically by executing the inherited public getter methods: `getId()` and `getTitle()`.
 
 ---
 
-## How to Run the Verification Engine
+## 🧪 How to Run and Pass the Test Suite
 
-Your project layout utilizes Maven conventions. To run the automated test suite and check your work, execute the following command in your terminal pane:
+Your environment runs on Maven. A complete unit testing engine (`LibraryItemTest.java`) has been pre-configured to automatically grade your encapsulation and state-guarding mechanics.
+
+### Step 1: Open Your Terminal
+Open the built-in terminal at the bottom pane of your IDE workspace, ensuring you are in the project's root folder (where `pom.xml` resides).
+
+### Step 2: Execute the Automated Verifier
+Run the following build command to clean old compilation fragments, compile your fresh changes, and spin up the testing engine:
 
 ```bash
 mvn clean test
